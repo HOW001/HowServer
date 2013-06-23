@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+ "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+ "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+
+	<class name="db.model.Player" table="players" optimistic-lock="version">
+		<cache usage="read-write"/>
+<!-- 		<id name="id" type="int" column="ID"> -->
+<!-- 			<generator class="native" /> -->
+<!-- 		</id> -->
+		<id name="id" column="ID" type="int"/>
+		<version  name="version" column="VERSION" type="int"/>
+		<property name="name" column="NAME" type="string" not-null="true" unique="true"/>
+		<property name="userName" column="USERNAME" type="string" not-null="true"/>
+		<property name="level" column="LEVELS" type="int" />
+		<property name="currentExp" column="CURRENTEXP" type="int" />
+		<property name="gender" column="GENDER" type="int" />
+		<property name="leaderShip" column="LEADERSHIP" type="int"/>
+		<property name="actionValue" column="ACTIONVALUE" type="int"/>
+		<property name="lastActionRecoveryTime" column="LASTACTIONRECOVERYTIME" type="long"/>
+		<property name="currentSkill" column="CURRENTSKILL" type="int"/>
+		<property name="currentSkillValue" column="CURRENTSKILLVALUE" type="int"/>
+		<property name="sceneID" column="SCENEID" type="int" />
+		<property name="onLineTime" column="TOTALOLTIME" type="long" />	
+		<property name="playerLevel" column="PLAYERLEVEL" type="byte" />
+		<property name="registerTime" column="REGISTERTIME" type="timestamp"/>	
+		<property name="dailyOnLineTime" column="DAILYONLINETIME" type="long"/>
+		<property name="registerIP" column="REGISTERIP" type="string"/>
+		<property name="lastLogoutTime" column="LASTLOGOUTTIME" type="long"/>
+		<property name="signInDay" column="SIGNINDAY" type="int"/>
+		<property name="lastLoginTime" column="LASTLOGINTIME" type="timestamp"/>
+		<property name="skills"	   column="SKILLS" type="string"/>
+		
+		<!-- 一个玩家可以拥有一个背包实体 -->
+		<one-to-one name="playerPackEntry" property-ref="holder" cascade="all"/>
+        <!-- 一个玩家可以拥有一个非基本信息实体 -->
+		<one-to-one name="playerNonBasicInfoEntry" property-ref="holder" cascade="all"/>
+		<!-- 一个玩家可以拥有一个比赛完成信息实体 -->
+		<one-to-one name="playerCompetitionInfoEntry" property-ref="holder" cascade="all"/>
+		<!-- 一个玩家可以拥有一个开服活动信息实体 -->
+		<one-to-one name="livenessEntry" property-ref="holder" cascade="all"/>
+		<!-- 一个玩家可以拥有多个英雄 -->
+		<set name="heroEntry" inverse="true" cascade="all-delete-orphan" lazy="false">
+		   <key column="holder"/>
+		   <one-to-many class="db.model.Hero"/>
+		</set>
+		</class>
+</hibernate-mapping>

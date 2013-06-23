@@ -1,0 +1,281 @@
+<project name="rekoo1" default="local-jar" basedir=".">
+	<!--修改内容
+	20130116 添加javac时使用JDK路径
+	-->
+	<!-- 配置环境变量 -->
+	<property name="src.dir" value="src" />
+	<property name="bin.dir" value="bin" />
+	<property name="lib.dir" value="lib" />
+	<property name="res.dir" value="res" />
+	<property name="provider.dir" value="provider"/>
+	<property name="tmp.dir" value="tmp" />
+
+	<!-- 打包设置 -->
+	<property name="jar.dir" value="." />
+	<property name="jar.name" value="carServer.jar" />
+	<property name="mainclass.name" value="server.ServerEntrance" />
+	<property name="class.path" value="lib/activation.jar lib/antlr-2.7.6rc1.jar lib/asm-attrs.jar lib/asm.jar lib/c3p0-0.9.1.jar lib/cglib-2.1.3.jar lib/commons-beanutils-1.8.0-BETA.jar lib/commons-collections-3.2.jar lib/commons-codec-1.4.jar lib/commons-digester-1.8.jar lib/commons-httpclient-3.0.jar lib/commons-lang-2.5.jar lib/commons-logging-1.0.4.jar lib/commons-net-ftp-2.0.jar lib/dom4j-2.0.0-ALPHA1.jar lib/ehcache-core-2.5.1.jar lib/hibernate-jpa-2.0-api-1.0.1.Final.jar lib/hibernate3.jar lib/jakarta-oro-2.0.8.jar lib/javassist-3.12.0.GA.jar lib/javolution.jar lib/jta-1.1.jar lib/jul-to-slf4j-1.6.3.jar lib/jxl.jar lib/libfb303.jar lib/libthrift.jar lib/log4j-1.2.15.jar  lib/log4j-over-slf4j-1.6.3.jar lib/mail.jar  lib/MINA2.0.jar lib/mysql-connector-java-5.1.14-bin.jar lib/ojdbc14.jar lib/QQAPI20120714.jar lib/slf4j-api-1.5.2.jar lib/slf4j-ext-1.6.3.jar lib/slf4j-log4j12-1.5.2.jar lib/slf4j-migrator-1.6.3.jar" />
+
+	<!-- 发布设置 -->
+	<property name="zip.file" value="carServer.zip" />
+	<property name="res.zip" value="res.zip" />
+	<property name="ftp.host" value="127.0.0.1"/>
+	<property name="ftp.port" value="55666"/>
+
+	<!-- 清理旧文件 -->
+	<macrodef name="clean">
+		<sequential>
+			<delete file="${zip.file}" />
+			<delete dir="${bin.dir}" />
+			<delete file="${jar.name}" />
+		</sequential>
+	</macrodef>
+
+	<!-- 编译预处理 -->
+	<macrodef name="init">
+		<sequential>
+			<delete dir="${bin.dir}" />
+			<mkdir dir="${bin.dir}" />
+		</sequential>
+	</macrodef>
+
+	<!-- 带参数的预储压力 -->
+	<macrodef name="init-with-arg">
+		<attribute name="server" />
+		<sequential>
+			<clean />
+			<delete dir="${bin.dir}" />
+			<mkdir dir="${bin.dir}" />
+			<mkdir dir="${conf.dir}"/>
+		</sequential>
+	</macrodef>
+
+	<!-- 编译 -->
+	<macrodef name="compile">
+		<sequential>
+			<!-- 编译 -->
+			<!--<javac fork="true" executable="D:\Java\jdk1.6.0_01\bin\javac" srcdir="${src.dir}" destdir="${bin.dir}">-->
+				<javac srcdir="${src.dir}" destdir="${bin.dir}">
+				<compilerarg    line="-encoding UTF8 "/>
+				<classpath>
+					<!-- 库文件处理 -->
+					<path id="classpath">
+						<fileset dir="${lib.dir}">
+							<include name="**/*.jar" />
+						</fileset>
+					</path>
+				</classpath>
+			</javac>
+			<!-- 复制文件 -->
+			<copy todir="${bin.dir}">
+				<fileset dir="${src.dir}" excludes="**/*.java" />
+			</copy>
+		</sequential>
+	</macrodef>
+
+
+	<!-- 打包 -->
+	<macrodef name="package">
+		<sequential>
+			<!-- 记录时间戳 -->
+			<tstamp>
+				<format property="-timestamp" pattern="yyyy-MM-dd_HH-mm-ss" />
+			</tstamp>
+			<echo>build time = ${-timestamp}</echo>
+			<jar destfile="${jar.name}">
+				<fileset dir="${bin.dir}" />
+				<!-- 生成文件 -->
+				<manifest>
+					<attribute name="Main-Class" value="${mainclass.name}" />
+					<attribute name="Class-path" value="${class.path}" />
+					<attribute name="tstamp" value="${-timestamp}" />
+				</manifest>
+			</jar>
+		</sequential>
+	</macrodef>
+
+	<!-- 批量拷贝资源 -->
+	<macrodef name="copyres">
+		<attribute name="arg"/>
+		<sequential>
+			<property file="${conf.dir}/server@{arg}.txt"/>
+			<copy todir="${tmp.dir}/${res.dir}">
+				<fileset dir="${res.dir}">
+					<!--<include name="*.**"/>-->
+					<include name="staticdatas/*.**"/>
+					<exclude name="CVS"/>
+					<exclude name="**/vssver.*"/>
+					<exclude name="**vssver2*"/>
+				</fileset>
+			</copy>
+			<!--<copy todir="${tmp.dir}/${res.dir}">
+				<fileset dir="${res.dir}">
+					<exclude name="CVS"/>
+				</fileset>
+			</copy>-->
+			<copy todir="${tmp.dir}/${provider.dir}">
+				<fileset dir="${provider.dir}">
+					<include name="*/**/*.xml"/>
+				</fileset>
+			</copy>
+		</sequential>
+	</macrodef>
+
+	<!-- 打成zip包 -->
+	<macrodef name="publish">
+		<attribute name="server" />
+		<sequential>
+			<tstamp>
+				<format property="-timestamp" pattern="yyyy-MM-dd" />
+			</tstamp>
+			<delete file="${zip.file}" />
+			<mkdir dir="${tmp.dir}" />
+			<copyres arg="@{server}" />
+			<copy todir="${tmp.dir}/${lib.dir}">
+				<fileset dir="${lib.dir}" />
+			</copy>
+			<copy todir="${tmp.dir}" file="${jar.name}" />
+			<zip destfile="${zip.file}" basedir="${tmp.dir}" />
+			<zip destfile="${-timestamp}${zip.file}" basedir="${tmp.dir}" />
+			<delete dir="${tmp.dir}" />
+		</sequential>
+	</macrodef>
+
+	<!-- 打成不包含lib的zip包 -->
+	<macrodef name="publish-without-lib">
+		<attribute name="server" />
+		<sequential>
+			<tstamp>
+			<format property="-timestamp" pattern="yyyy-MM-dd" />
+			</tstamp>
+			<delete file="${zip.file}" />
+			<mkdir dir="${tmp.dir}" />
+			<copyres arg="@{server}"/>
+			<copy todir="${tmp.dir}" file="${jar.name}" />
+			<zip destfile="${zip.file}" basedir="${tmp.dir}" />
+			<zip destfile="${-timestamp}${zip.file}" basedir="${tmp.dir}" />
+			<delete dir="${tmp.dir}" />
+		</sequential>
+	</macrodef>
+
+	<!-- 只打res包 -->
+	<macrodef name="publish-onlyres">
+		<attribute name="server" />
+		<sequential>
+			<delete file="${res.zip}" />
+			<mkdir dir="${tmp.dir}" />
+			<!--
+			<copy todir="${tmp.dir}/${res.dir}">
+				<fileset dir="${res.dir}" />
+			</copy>
+			-->
+			<copyres arg="@{server}"/>
+			<zip destfile="${res.zip}" basedir="${tmp.dir}" />
+			<delete dir="${tmp.dir}" />
+		</sequential>
+	</macrodef>
+
+
+	<macrodef name="sendfile">
+		<attribute name="remotedir" />
+		<attribute name="file" />
+		<sequential>
+			<echo message="delete @{file} in @{remotedir}"/>
+			<ftp action="del" server="${ftp.host}" port="${ftp.port}" remotedir="@{remotedir}" userid="upLoad" password="123456" depends="yes">
+				<fileset dir="./">
+					<include name="@{file}" />
+				</fileset>
+			</ftp>
+			<echo message="send @{file} to @{remotedir}" />
+
+			<ftp server="${ftp.host}" port="${ftp.port}" remotedir="@{remotedir}" userid="upLoad" password="123456" depends="yes">
+				<fileset dir="./">
+					<include name="@{file}" />
+				</fileset>
+			</ftp>
+		</sequential>
+	</macrodef>
+
+	<macrodef name="rekoo-jar">
+		<attribute name="arg" />
+		<sequential>
+			<echo message="=====	rekoo-jar @{arg}	=====" />
+			<clean />
+			<init-with-arg server="@{arg}" />
+			<compile />
+			<package />
+			<sendfile remotedir="./rekoo@{arg}" file="${jar.name}" />
+			<echo message="===== rekoo-jar @{arg} done =====" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="rekoo-res">
+		<attribute name="arg" />
+		<sequential>
+			<echo message="=====	rekoo-res @{arg}	=====" />
+			<publish-onlyres server="@{arg}"/>
+			<sendfile remotedir="./rekoo@{arg}" file="${res.zip}" />
+			<echo message="=====	rekoo-res @{arg} done	=====" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="rekoo">
+		<attribute name="arg" />
+		<sequential>
+			<echo message="=====	rekoo @{arg}	=====" />
+			<clean />
+			<init-with-arg server="@{arg}" />
+			<compile />
+			<package />
+			<publish-without-lib server="@{arg}" />
+			<sendfile remotedir="./rekoo@{arg}" file="${zip.file}" />
+			<copytmp remotedir="@{arg}" file="${zip.file}" />
+			<echo message="=====	rekoo @{arg} done	=====" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="rekoo-all">
+		<attribute name="arg" />
+		<sequential>
+			<echo message="=====	rekoo-all @{arg}	=====" />
+			<clean />
+			<init-with-arg server="@{arg}" />
+			<compile />
+			<package />
+			<publish server="@{arg}"/>
+			<sendfile remotedir="./rekoo@{arg}" file="${zip.file}" />
+			<echo message="=====	rekoo-all @{arg} done	=====" />
+		</sequential>
+	</macrodef>
+
+	<macrodef name="copytmp">
+		<attribute name="remotedir" />
+		<attribute name="file" />
+		<sequential>
+			<copy file="@{file}" todir="E:\\UpdateTool\\servers\\@{remotedir}"/>
+		</sequential>
+	</macrodef>
+	<target name="run">
+		<java jar="${jar.name}" maxmemory="256M" fork="true" />
+	</target>
+
+	<target name="local-jar">
+		<clean />
+		<init />
+		<compile />
+		<package />
+		<sendfile remotedir="." file="${jar.name}" />
+	</target>
+	<target name="qq-jar">
+		<rekoo-jar arg="qq"/>
+	</target>
+	<target name="qq">
+		<rekoo arg="qq"/>
+	</target>
+	<target name="me-jar">
+		<rekoo-jar arg="me"/>
+	</target>
+	<target name="me">
+		<rekoo arg="me"/>
+	</target>
+</project>

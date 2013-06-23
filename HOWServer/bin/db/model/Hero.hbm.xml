@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+ "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+	<class name="db.model.Hero" table="heros" optimistic-lock="version">
+	    <cache usage="read-write"/>
+<!-- 		<id name="id" type="int" column="ID"> -->
+<!-- 			<generator class="native" /> -->
+<!-- 		</id> -->
+		<id name="id" column="ID" type="int"/>
+		<version  name="version" column="VERSION" type="int"/>
+		<property name="holder" column="HOLDER" type="int"/>
+		<property name="currentExp" column="CURRENTEXP" type="int" />
+		<property name="level"  column="LEVEL" type="int"/>
+		<property name="code" column="CODE" type="int"/>
+		<property name="power" column="POWER" type="int"/>
+		<property name="agile" column="AGILE" type="int"/>
+		<property name="mp"    column="MP"    type="int"/>
+		<property name="toughness" column="TOUGHNESS" type="int"/>
+	</class>
+</hibernate-mapping>

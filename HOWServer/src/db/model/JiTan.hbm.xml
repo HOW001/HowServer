@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+ "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+	<class name="db.model.JiTan" table="jitan" optimistic-lock="version">
+	    <cache usage="read-write"/>
+<!-- 		<id name="id" type="int" column="ID"> -->
+<!-- 			<generator class="native" /> -->
+<!-- 		</id> -->
+		<id name="id" column="ID" type="int"/>
+		<version  name="version" column="VERSION" type="int"/>
+		<property name="holder" column="HOLDER" type="int"/>
+		
+		<property name="whiteFreshTime" column="WHITEFRESHTIME" type="timestamp" />
+		<property name="whiteFreeFreshDay"  column="WHITEFREEFRESHDAY" type="int"/>
+		<property name="whiteFreeFreshTimes" column="WHITEFREEFRESHTIMES" type="int"/>
+		
+		<property name="greenFreshTime" column="GREENFRESHTIME" type="timestamp" />
+		<property name="greenFreeFreshDay"  column="GREENFREEFRESHDAY" type="int"/>
+		<property name="greenFreeFreshTimes" column="GREENFREEFRESHTIMES" type="int"/>
+		
+		<property name="blueFreshTime" column="BLUEFRESHTIME" type="timestamp" />
+		<property name="blueFreeFreshDay"  column="BLUEFREEFRESHDAY" type="int"/>
+		<property name="blueFreeFreshTimes" column="BLUEFREEFRESHTIMES" type="int"/>
+		
+		<property name="purpleFreshTime" column="PURPLEFRESHTIME" type="timestamp" />
+		<property name="purpleFreeFreshDay"  column="PURPLEFREEFRESHDAY" type="int"/>
+		<property name="purpleFreeFreshTimes" column="PURPLEFREEFRESHTIMES" type="int"/>
+	</class>
+</hibernate-mapping>

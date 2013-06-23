@@ -1,0 +1,4 @@
+#Sun May 19 12:41:10 CST 2013
+CurrentDayValue=17
+WriteName=test001
+TestValue=20033

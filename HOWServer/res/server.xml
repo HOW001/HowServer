@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF8"?>
+	<data>
+		<!-- 服务器内部名称 -->
+		<id>15</id>
+		<!-- 端口号 -->
+		<port>60000</port>
+		<!-- 服务器名称 -->
+		<serverName>测试一区</serverName>
+		<!-- 登录公告 -->
+		<anounncement>欢迎来到飙车世界</anounncement>
+		<!-- 策划数据目录 -->
+		<resDir>res/staticdatas</resDir>
+		<!-- 玩家等级上限 -->
+		<maxLevel>60</maxLevel>
+		<!--人数上限，默认为9999 -->
+		<players>20000</players>
+		<!-- 是否开放注册 -->
+		<canRegister>true</canRegister>
+		<!-- subgame用于提交 -->
+		<subgame>rekoo_car</subgame>
+		<!-- 是否开始debug -->
+		<debug>true</debug>
+		<!-- 是否开启邮件发送 -->
+		<mailEnable>true</mailEnable>
+		<!-- 收件人列表 -->
+		<mailList>rekoo2012@163.com</mailList>
+		<!--SMTP地址 -->
+		<mailHost>smtp.163.com</mailHost>
+		<!-- 邮箱用户名 -->
+		<mailUser>rekoo002</mailUser>
+		<!-- 邮箱密码 -->
+		<mailPassword>rekoo123456</mailPassword>
+		<!-- 本地IP -->
+		<localIp>127.0.0.1</localIp>
+		<!-- 绝对路径参考目录 -->
+		<absolutePathRef>F://gameData</absolutePathRef>
+</data>

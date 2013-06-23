@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+"-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+ "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+<hibernate-mapping>
+	<class name="db.model.PlayerCompetitionInfo" table="player_competition_info" optimistic-lock="version">
+		<cache usage="read-write"/>
+<!-- 		<id name="id" type="int" column="ID"> -->
+<!-- 			<generator class="native" /> -->
+<!-- 		</id> -->
+		<id name="id" column="ID" type="int"/>
+		<version name="version" column="VERSION" type="int" />
+		<property name="holder" column="HOLDER" type="int"/>
+		<property name="normalGridCompleteState" column="NORMALGRIDCOMPLETESTATE" type="string" />
+		<property name="nightMareGridCompleteState" column="NIGHTMAREGRIDCOMPLETESTATE" type="string"/>
+		<property name="hellGridCompleteState" column="HELLGRIDCOMPLETESTATE" type="string"/>
+	</class>
+</hibernate-mapping>
